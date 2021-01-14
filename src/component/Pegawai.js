@@ -25,14 +25,6 @@ const InputBoxAbove = styled.div`
     padding: 10px;
     border-radius: 5px 5px 0px 0px ;
 `;
-
-const InputBox = styled.input`
-    border: 1px solid #a5b1c2;
-    padding: 10px;
-    border-radius: 5px;
-    width: 100%;
-`;
-
 const InputBoxCenter = styled.div`
     border-left: 1px solid #a5b1c2;
     border-right: 1px solid #a5b1c2;
@@ -61,7 +53,7 @@ const Judul = styled.input`
 const Label = styled.p`
     margin-bottom: 2px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     font-family: 'Montserrat', sans-serif;
 `;
 
@@ -95,24 +87,32 @@ const Inputx = styled.input`
 function Pelayanan() {
 
     const [modal, setModal] = useState(false)
+    const [listPegawai, setListPegawai] = useState([])
     const [id, setId] = useState('')
-
-    const [item_1, setItem1] = useState('')
-    const [item_2, setItem2] = useState('')
-    const [item_3, setItem3] = useState('')
-    const [item_4, setItem4] = useState('')
-    const [item_5, setItem5] = useState('')
-    const [judul, setJudul] = useState('')
-
-    const [listKodeRekening, setListKodeRekening] = useState([])
+    const [nip, setNip] = useState('')
+    const [nama_pegawai, setNamaPegawai] = useState('')
+    const [email, setEmail] = useState('')
+    const [no_hp, setNoHp] = useState('')
+    const [pangkat_gol, setPangkatGol] = useState('')
+    const [jabatan, setJabatan] = useState('')
+    const [eselon, setEselon] = useState('')
+    const [bank, setBank] = useState('')
+    const [nomor_rekening, setNomorRekening] = useState('')
+    const [jabatan_plt, setJabatanPlt] = useState('')
+    const [password, setPassword] = useState('')
+    const [isUpdate, setIsUpdate] = useState('')
+    const [listBank, setListBank] = useState([])
+    const [listEselon, setListEselon] = useState([])
+    const [listPangkat, setListPangkat] = useState([])
+    const [listJabatan, setListJabatan] = useState([])
 
 
     useEffect(() => {
-        getkoderekening()
-        // attrBank()
-        // attrEselon()
-        // attrJabatan()
-        // attrPangkat()
+        getpegawai()
+        attrBank()
+        attrEselon()
+        attrJabatan()
+        attrPangkat()
     }, []);
 
 
@@ -121,48 +121,76 @@ function Pelayanan() {
         setModal(!modal)
     }
 
-    const getkoderekeningbyid= async (id) => {
-        const url = 'getkoderekeningbyid'
+    const getPegawaiById = async (id) => {
+        const url = 'getpegawaibyid'
         let pegawaibyid = await getbyid(id, url)
         console.log(pegawaibyid)
         setId(id)
-        setItem1(pegawaibyid[0].item_1)
-        setItem2(pegawaibyid[0].item_2)
-        setItem3(pegawaibyid[0].item_3)
-        setItem4(pegawaibyid[0].item_4)
-        setItem5(pegawaibyid[0].item_5)
-        setJudul(pegawaibyid[0].judul)
+        setNip(pegawaibyid[0].nip)
+        setNamaPegawai(pegawaibyid[0].nama_pegawai)
+        setEmail(pegawaibyid[0].email)
+        setNoHp(pegawaibyid[0].no_hp)
+        setPangkatGol(pegawaibyid[0].pangkat_gol)
+        setJabatan(pegawaibyid[0].jabatan)
+        setEselon(pegawaibyid[0].eselon)
+        setBank(pegawaibyid[0].bank)
+        setNomorRekening(pegawaibyid[0].nomor_rekening)
+        setJabatanPlt(pegawaibyid[0].jabatan_plt)
+        setIsUpdate(true)
         modelTrigger()
     }
 
+    const attrBank = async () => {
+        const url = 'getattrbyjenis'
+        const jenis = 'Bank'
+        let attrbank = await getbyid(jenis, url)
+        setListBank(attrbank)
+    }
 
-    const getkoderekening = async () => {
+    const attrEselon = async () => {
+        const url = 'getattrbyjenis'
+        const jenis = 'Eselon'
+        let attreselon = await getbyid(jenis, url)
+        setListEselon(attreselon)
+    }
+    const attrPangkat = async () => {
+        const url = 'getattrbyjenis'
+        const jenis = 'Pangkat'
+        let attrpangkat = await getbyid(jenis, url)
+        setListPangkat(attrpangkat)
+    }
+
+    const attrJabatan = async () => {
+        const url = 'getattrbyjenis'
+        const jenis = 'Jabatan'
+        let attrjabatan = await getbyid(jenis, url)
+        setListJabatan(attrjabatan)
+    }
+
+    const getpegawai = async () => {
         const data = []
-        const url = 'getkoderekening'
-        let kd = await getall(url)
-        console.log(kd)
-        let data_length = kd.length
+        const url = 'getpegawai'
+        let pegawai = await getall(url)
+
+        let data_length = pegawai.length
 
         for (let i = 0; i < data_length; i++) {
             data.push({
                 no: i + 1,
-                id: kd[i].id,
-                akun: kd[i].item_1,
-                kelompok: kd[i].item_2,
-                jenis: kd[i].item_3,
-                objek: kd[i].item_4,
-                rincian_objek: kd[i].item_5,
-                judul: kd[i].judul
+                id: pegawai[i].id,
+                nama_pegawai: pegawai[i].nama_pegawai,
+                nip: pegawai[i].nip,
+                jabatan: pegawai[i].jabatan,
+                eselon: pegawai[i].eselon,
             })
         }
-        setListKodeRekening(data)
+        setListPegawai(data)
 
     }
 
-    const removekoderekening = async (idx) => {
-        const url = 'deletekoderekening'
-        console.log(idx)
-        const hapus = await remove(idx, url)
+    const removepagawai = async (id) => {
+        const url = 'deletepegawai'
+        const hapus = await remove(id, 'deletepegawai')
         console.log(hapus)
         if (hapus === 1) {
             notification.open({
@@ -171,54 +199,34 @@ function Pelayanan() {
                     '',
                 icon: <CheckCircleOutlined style={{ color: '#00b894' }} />,
             });
-            getkoderekening()
+            getpegawai()
         }
     }
 
     const create = async () => {
-        let datas = {
-            item_1,
-            item_2,
-            item_3,
-            item_4,
-            item_5,
-            judul
-        }
-        const apiurl = 'createkoderekening';
-        console.log(apiurl)
-        let createpegawai = await createupdate(datas, apiurl)
-        if (createpegawai === 1) {
+        if (nip === '' || nama_pegawai === '') {
             notification.open({
-                message: 'Data Berhasil disimpan',
+                message: 'Gagal Menyimnpan',
                 description:
-                    '',
-                icon: <CheckCircleOutlined style={{ color: '#00b894' }} />,
-            });
-            getkoderekening()
-            // getpegawai()
-            // modelTrigger()
-            // resetForm()
-        } else {
-            notification.open({
-                message: 'Gagal Menyimpan Data',
-                description:
-                    '',
+                    'Form tidak boleh kosong',
                 icon: <CloseCircleOutlined style={{ color: '#e84118' }} />,
             });
-        }
-    }
-
-    const update = async () => {
+        } else {
             let datas = {
-                id,
-                item_1,
-                item_2,
-                item_3,
-                item_4,
-                item_5,
-                judul
+                nip,
+                nama_pegawai,
+                email,
+                no_hp,
+                pangkat_gol,
+                jabatan,
+                eselon,
+                bank,
+                nomor_rekening,
+                jabatan_plt,
+                password,
             }
-            const apiurl = 'updatekoderekening';
+            console.log(isUpdate)
+            const apiurl = 'createpegawai';
             console.log(apiurl)
             let createpegawai = await createupdate(datas, apiurl)
             if (createpegawai === 1) {
@@ -228,8 +236,7 @@ function Pelayanan() {
                         '',
                     icon: <CheckCircleOutlined style={{ color: '#00b894' }} />,
                 });
-                //getpegawai()
-                getkoderekening()
+                getpegawai()
                 modelTrigger()
                 resetForm()
             } else {
@@ -240,19 +247,78 @@ function Pelayanan() {
                     icon: <CloseCircleOutlined style={{ color: '#e84118' }} />,
                 });
             }
+        }
     }
 
+    const update = async () => {
+        if (nip === '' || nama_pegawai === '') {
+            notification.open({
+                message: 'Gagal Menyimnpan',
+                description:
+                    'Form tidak boleh kosong',
+                icon: <CloseCircleOutlined style={{ color: '#e84118' }} />,
+            });
+        } else {
+            let datas = {
+                id,
+                nip,
+                nama_pegawai,
+                email,
+                no_hp,
+                pangkat_gol,
+                jabatan,
+                eselon,
+                bank,
+                nomor_rekening,
+                jabatan_plt,
+                password,
+            }
+            console.log(isUpdate)
+            const apiurl = 'updatepegawai';
+            console.log(apiurl)
+            let createpegawai = await createupdate(datas, apiurl)
+            if (createpegawai === 1) {
+                notification.open({
+                    message: 'Data Berhasil disimpan',
+                    description:
+                        '',
+                    icon: <CheckCircleOutlined style={{ color: '#00b894' }} />,
+                });
+                getpegawai()
+                modelTrigger()
+                resetForm()
+            } else {
+                notification.open({
+                    message: 'Gagal Menyimpan Data',
+                    description:
+                        '',
+                    icon: <CloseCircleOutlined style={{ color: '#e84118' }} />,
+                });
+            }
+        }
+    }
 
+    const createorupdate = () => {
+        isUpdate ? update() : create()
+    }
 
-
+    const createnew = async () => {
+        modelTrigger()
+        setIsUpdate(false)
+        resetForm()
+    }
 
     const resetForm = () => {
-        setItem1('')
-        setItem2('')
-        setItem3('')
-        setItem4('')
-        setItem5('')
-        setJudul('')
+        setNip('')
+        setNamaPegawai('')
+        setEmail('')
+        setNoHp('')
+        setPangkatGol('')
+        setJabatan('')
+        setEselon('')
+        setBank('')
+        setNomorRekening('')
+        setJabatanPlt('')
     }
 
     const columns = [
@@ -262,37 +328,29 @@ function Pelayanan() {
             dataIndex: 'no',
         },
         {
-            title: 'Kode Rekening',
-            key: 'action',
-            render: (text, record) => {
-                if (record.kelompok === '' && record.jenis === '' && record.objek === '' && record.rincian_objek === '') {
-                    return (<span style={{ fontWeight: 'bold' }}> {record.akun} </span>)
-                } else if (record.jenis === '' && record.objek === '' && record.rincian_objek === '') {
-                    return (<span style={{ fontWeight: 'bold' }}> {record.akun}.{record.kelompok} </span>)
-                }
-                else if (record.objek === '' && record.rincian_objek === '') {
-                    return (<span style={{ fontWeight: 'bold' }}> {record.akun}.{record.kelompok}.{record.jenis} </span>)
-                } else if (record.rincian_objek === '') {
-                    return (<span style={{ fontWeight: 'bold' }}> {record.akun}.{record.kelompok}.{record.jenis}.{record.objek} </span>)
-                } else {
-                    return (<span style={{ fontWeight: 'bold' }}> {record.akun}.{record.kelompok}.{record.jenis}.{record.objek}.{record.rincian_objek} </span>)
-                }
-            }
+            title: 'Nama',
+            key: 'nama_pegawai',
+            dataIndex: 'nama_pegawai'
         },
         {
-            title: 'Judul / Deskripsi',
-            key: 'judul',
-            dataIndex: 'judul'
+            title: 'NIP',
+            key: 'nip',
+            dataIndex: 'nip'
+        },
+        {
+            title: 'Jabatan',
+            key: 'jabatan',
+            dataIndex: 'jabatan'
         },
         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <span>
-                    <Button key="edit" onClick={() => getkoderekeningbyid(record.id)} style={{ marginLeft: 10 }} type="primary" icon={<InfoCircleOutlined />} >Edit</Button>
+                    <Button key="edit" onClick={() => getPegawaiById(record.id)} style={{ marginLeft: 10 }} type="primary" icon={<InfoCircleOutlined />} >Edit</Button>
                     <Popconfirm
                         title="Anda yakin menghapus Data ini?"
-                        onConfirm={() => removekoderekening(record.id)}
+                        onConfirm={() => removepagawai(record.id)}
                         // onCancel={cancel}
                         okText="Yes"
                         cancelText="No"
@@ -304,6 +362,22 @@ function Pelayanan() {
         },
     ];
 
+    const onChangeJabatan = value => {
+        setJabatan(value)
+    }
+
+    const onChangeBank = value => {
+        setBank(value)
+    }
+
+    const onChangePangkat = value => {
+        setPangkatGol(value)
+    }
+
+    const onChangeEselon= value => {
+        setEselon(value)
+    }
+
 
     return (
         <Content
@@ -311,82 +385,98 @@ function Pelayanan() {
             style={{
                 margin: '24px 16px',
                 padding: 24,
-                minHeight: 280,
+                minHeight: '100%',
             }}
         >
 
             <Card
-                title="Kode Rekening"
+                title="Pegawai"
                 //extra={<Button type="dashed" onClick={() => browserHistory.push('/addpegawai')}>Tambah Pegawai </Button>}
-                style={{ width: '100%', marginBottom: 20 }}
-                headStyle={{ color: 'white', backgroundColor: '#0984e3', fontWeight: 'bold', fontSize: 20 }}
-            >
-                <Row style={{ width: '100%' }}>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Akun</Label>
-                        <InputBox value={item_1} onChange={e => setItem1(e.target.value)} />
-                    </Col >
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Kelompok</Label>
-                        <InputBox value={item_2} onChange={e => setItem2(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Jenis</Label>
-                        <InputBox value={item_3} onChange={e => setItem3(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Objek</Label>
-                        <InputBox value={item_4} onChange={e => setItem4(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Rincian Objek</Label>
-                        <InputBox value={item_5} onChange={e => setItem5(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={9} xl={12} style={{ padding: 5 }}>
-                        <Label>Judul</Label>
-                        <InputBox value={judul} onChange={e => setJudul(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={3} xl={2} style={{ padding: 5 }}>
-                        <Buttonx onClick={create}>Simpan</Buttonx>
-                    </Col>
-                </Row>
-            </Card>
-            <Table columns={columns} dataSource={listKodeRekening} />
+                extra={<Button type="dashed" onClick={createnew}>Tambah Pegawai </Button>}
+                style={{ width: '100%', borderWidth: 0, marginBottom:20 }}
+                headStyle={{ color: 'white', backgroundColor: '#0984e3', fontWeight: 'bold', fontSize: 20, }}
+            />
+
+            <Table columns={columns} dataSource={listPegawai} />
 
             <Modal
-                title="Edit Kode Rekening"
+                title="Tambah Pegawai"
                 centered
                 visible={modal}
-                onOk={update}
+                onOk={createorupdate}
                 onCancel={modelTrigger}
                 width={1000}
             >
-                <Row style={{ width: '100%' }}>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Akun</Label>
-                        <InputBox value={item_1} onChange={e => setItem1(e.target.value)} />
-                    </Col >
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Kelompok</Label>
-                        <InputBox value={item_2} onChange={e => setItem2(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Jenis</Label>
-                        <InputBox value={item_3} onChange={e => setItem3(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Objek</Label>
-                        <InputBox value={item_4} onChange={e => setItem4(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={2} xl={2} style={{ padding: 5 }}>
-                        <Label>Rincian Objek</Label>
-                        <InputBox value={item_5} onChange={e => setItem5(e.target.value)} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={9} xl={12} style={{ padding: 5 }}>
-                        <Label>Judul</Label>
-                        <InputBox value={judul} onChange={e => setJudul(e.target.value)} />
-                    </Col>
-                </Row>
+                <InputBoxAbove style={{ backgroundColor: '#f7d794' }}>
+                    <Label>Data Personal</Label>
+                </InputBoxAbove>
+                <InputBoxCenter>
+                    <Label>Nama Lengkap</Label>
+                    <Inputx placeholder="Nama Lengkap" value={nama_pegawai} onChange={e => setNamaPegawai(e.target.value)} />
+                </InputBoxCenter>
+                <InputBoxCenter>
+                    <Label>Email</Label>
+                    <Inputx placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+                </InputBoxCenter>
+                <InputBoxCenter>
+                    <Label>Nomor HP / WA</Label>
+                    <Inputx placeholder="Nomor HP / WA" value={no_hp} onChange={e => setNoHp(e.target.value)} />
+                </InputBoxCenter>
+                <InputBoxCenter style={{ backgroundColor: '#f7d794' }}>
+                    <Label>Data Kepegawaian</Label>
+                </InputBoxCenter>
+                <InputBoxCenter>
+                    <Label>Nomor Induk Pegawai (NIP)</Label>
+                    <Inputx placeholder="Nomor Induk Pegawai (NIP)" value={nip} onChange={e => setNip(e.target.value)} />
+                </InputBoxCenter>
+                <InputBoxCenter>
+                    <Label>Pangkat / Golongan</Label>
+                    <Select
+                        showSearch
+                        style={{ width: 200 }}
+                        placeholder="Pilih Jabatan"
+                        optionFilterProp="children"
+                        style={{ width: '100%', borderWidth: 0 }}
+                        onChange={onChangePangkat}
+                        value={pangkat_gol}
+                    >
+                        {listPangkat.map((data, index) =>
+                            <Option value={data.nama_attr}>{data.nama_attr}</Option>
+                        )}
+                    </Select>
+                </InputBoxCenter>
+                <InputBoxCenter>
+                    <Label>Jabatan</Label>
+                    <Select
+                        showSearch
+                        style={{ width: 200 }}
+                        placeholder="Pilih Jabatan"
+                        optionFilterProp="children"
+                        style={{ width: '100%', borderWidth: 0 }}
+                        onChange={onChangeJabatan}
+                        value={jabatan}
+                    >
+                        {listJabatan.map((data, index) =>
+                            <Option value={data.nama_attr}>{data.nama_attr}</Option>
+                        )}
+                    </Select>
+                </InputBoxCenter>
+                <InputBoxBottom>
+                    <Label>Eselon</Label>
+                    <Select
+                        showSearch
+                        style={{ width: 200 }}
+                        placeholder="Pilih Jabatan"
+                        optionFilterProp="children"
+                        style={{ width: '100%', borderWidth: 0 }}
+                        onChange={onChangeEselon}
+                        value={eselon}
+                    >
+                        {listEselon.map((data, index) =>
+                            <Option value={data.nama_attr}>{data.nama_attr}</Option>
+                        )}
+                    </Select>
+                </InputBoxBottom>
             </Modal>
 
         </Content>

@@ -1,6 +1,6 @@
 {
   "name": "ordersystemcontroller",
-  "proxy": "http://192.168.100.96/",
+  "homepage": "https://admin-blud.dinartech.com/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -32,7 +32,7 @@
     "styled-components": "^5.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set PORT=1234 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

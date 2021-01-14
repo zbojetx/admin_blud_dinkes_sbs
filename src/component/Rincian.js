@@ -12,7 +12,7 @@ import 'antd/dist/antd.css';
 import styled from 'styled-components'
 import { useStore } from 'react-redux';
 import NumberFormat from 'react-number-format'
-import { createupdate, getall, remove, getbyid } from '../api/api';
+import { createupdate, getall, remove, getbyid, getallpost } from '../api/api';
 
 const Headertable = styled.p`
     display: flex;
@@ -34,34 +34,34 @@ function Kurir(props) {
     const [harga_satuan, setharga_satuan] = useState(0)
     const [jumlah, setJumlah] = useState(0)
     const [total, setTotal] = useState(0)
+    const [listSatuan, setListSatuan] = useState([])
 
     useEffect(() => {
-        getAnggaranById()
+        console.log(props.location.state.kode_blud)
+        getRincianAnggaranById()
+        attrSatuan()
     }, [])
 
-    const satuan_sample = [
-        {
-            "title": 'Buah'
-        },
-        {
-            "title": 'Meter'
-        },
-        {
-            "title": 'Pcs'
-        },
-        {
-            "title": 'Lembar'
-        },
-        {
-            "title": 'Rim'
-        },
-    ]
+    const attrSatuan = async () => {
+        const url = 'getattrbyjenis'
+        const jenis = 'Satuan'
+        let attrsatuan = await getbyid(jenis, url)
 
-    const getAnggaranById = async() => {
+        setListSatuan(attrsatuan)
+    }
 
+    const getRincianAnggaranById = async() => {
+        // const kode_rekening = ''
+        // const tahun_anggaran = ''
+        // const kode_rekening = ''
+        const datas = {
+            kode_blud: props.location.state.kode_blud,
+            tahun_anggaran: props.location.state.tahun_anggaran,
+            kode_rekening: props.location.state.kode_rekening
+        }
         console.log(total)
-        const url = 'getanggaranbyid'
-        let rincian = await getbyid( props.location.state.id, url)
+        const url = 'getrinciananggaranbyblud'
+        let rincian = await getallpost(datas, url)
         console.log(rincian.length)
         for(let i = 0; i<rincian.length; i++){
             setTotal(parseInt(total) + parseInt(rincian[i].jumlah))
@@ -73,16 +73,22 @@ function Kurir(props) {
         const jumlahX = await parseInt(volume) * parseInt(harga_satuan)
         await setJumlah(jumlahX)
         setTotal(total + jumlah)
-        const id_sppd = props.location.state.id
+        const kode_blud = props.location.state.kode_blud
+        const kode_rekening= props.location.state.kode_rekening
+        const tahun_anggaran= props.location.state.tahun_anggaran
+        const id_kode_rekening = props.location.state.id_kode_rekening
         let datas = {
-            id_sppd,
+            kode_blud,
+            id_kode_rekening,
+            kode_rekening,
+            tahun_anggaran,
             uraian,
             volume,
             satuan,
             harga_satuan,
             jumlah
         }
-        const apiurl = 'createanggaran'
+        const apiurl = 'createrinciananggaran'
         console.log(apiurl)
         let createanggaran = await createupdate(datas, apiurl)
         if (createanggaran === 1) {
@@ -94,7 +100,7 @@ function Kurir(props) {
             });
             // getsppd()
             //modelTrigger()
-            getAnggaranById()
+            getRincianAnggaranById()
             resetForm()
         } else {
             notification.open({
@@ -119,7 +125,7 @@ function Kurir(props) {
                 icon: <CheckCircleOutlined style={{ color: '#00b894' }} />,
             });
             await setTotal(0)
-            getAnggaranById()
+            getRincianAnggaranById()
         }
     }
 
@@ -159,7 +165,7 @@ function Kurir(props) {
             <Form form={form} name="horizontal_login" layout="inline" onFinish={createAnggaran} style={{ backgroundColor: '#0984e3', padding: 20, }}>
                 <Row style={{ width: '100%', marginBottom: 5, backgroundColor: '#0984e3' }}>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                        <Title level={4} style={{ color: 'white' }}>Rincian Anggaran Perjalanan</Title>
+                        <Title level={4} style={{ color: 'white' }}>Input Rencana Anggaran</Title>
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Title level={2} style={{ color: 'white' }}>Rp <NumberFormat thousandSeparator={true} displayType={'text'} value={total} /></Title>
@@ -177,7 +183,6 @@ function Kurir(props) {
                             <Input
                                 autoFocus
                                 value={uraian}
-                                style={{ borderRadius: 5, height: 40, borderWidth: 0 }}
                                 placeholder="Uraian"
                                 onChange={(e) => setUraian(e.target.value)}
                             />
@@ -191,7 +196,6 @@ function Kurir(props) {
                             <Input
                                 placeholder="Volume"
                                 value={volume}
-                                style={{ borderRadius: 5, height: 40, borderWidth: 0 }}
                                 onChange={(e) => setVolume(e.target.value)}
                             />
                         </Form.Item>
@@ -203,8 +207,8 @@ function Kurir(props) {
                         >
                             <Select defaultValue="" style={{ borderRadius: 5, height: '100%', borderWidth: 0 }} onChange={handleChangeSatuan} value={satuan}>
                                 <Option value="">Satuan</Option>
-                                {satuan_sample.map((data) =>
-                                    <Option value={data.title}>{data.title}</Option>
+                                {listSatuan.map((data) =>
+                                    <Option value={data.nama_attr}>{data.nama_attr}</Option>
                                 )}
                             </Select>
                         </Form.Item>
@@ -225,7 +229,7 @@ function Kurir(props) {
                                 defaultValue={100000}
                                 formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                style={{ borderRadius: 5, height: 40, borderWidth: 0, width: '100%' }}
+                                style={{ width: '100%' }}
                                 value={harga_satuan}
                                 onChange={value => { setharga_satuan(value); setJumlah(parseInt(volume) * parseInt(value)) }}
                             />

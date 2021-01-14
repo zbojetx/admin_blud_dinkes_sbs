@@ -83,7 +83,7 @@ function Attr() {
     const [modal, setModal] = useState(false)
     const [nama_attr, setNamaAttr] = useState('')
     const [jenis_attr, setJenisAttr] = useState('')
-    const [listBank, setListBank] = useState([])
+    const [listSumberDana, setListSumberDana] = useState([])
     const [listEselon, setListEselon] = useState([])
     const [listPangkat, setListPangkat] = useState([])
     const [listJabatan, setListJabatan] = useState([])
@@ -95,7 +95,7 @@ function Attr() {
         attrEselon()
         attrJabatan()
         attrPangkat()
-        attrPangkat()
+        attrTahun()
         attrSatuan()
     }, [])
 
@@ -105,7 +105,7 @@ function Attr() {
 
     const attrBank = async () => {
         const url = 'getattrbyjenis'
-        const jenis = 'Bank'
+        const jenis = 'Sumber'
         const data = []
         let attrbank = await getbyid(jenis, url)
         console.log(attrbank)
@@ -118,7 +118,7 @@ function Attr() {
                 nama: attrbank[i].nama_attr,
             })
         }
-        setListBank(data)
+        setListSumberDana(data)
     }
 
     const attrEselon = async () => {
@@ -171,9 +171,9 @@ function Attr() {
         setListJabatan(data)
     }
 
-    const attrFromat = async () => {
+    const attrTahun = async () => {
         const url = 'getattrbyjenis'
-        const jenis = 'Format'
+        const jenis = 'Tahun'
         let attrformat = await getbyid(jenis, url)
          const data = []
         let data_length = attrformat.length
@@ -228,7 +228,7 @@ function Attr() {
             attrEselon()
             attrJabatan()
             attrPangkat()
-            attrFromat()
+            attrTahun()
             attrSatuan()
             setJenisAttr('')
             setNamaAttr('')
@@ -258,7 +258,7 @@ function Attr() {
             attrEselon()
             attrJabatan()
             attrPangkat()
-            attrFromat()
+            attrTahun()
             attrSatuan()
         }
     }
@@ -343,16 +343,16 @@ function Attr() {
             <Row style={{ width: '100%' }}>
                 <Col xs={12} sm={12} md={12} lg={12} xl={8} style={{ padding: 10 }}>
                     <Card
-                        title="Bank"
+                        title="Sumber Dana"
                         //extra={<Button type="dashed" onClick={() => browserHistory.push('/addpegawai')}>Tambah Pegawai </Button>}
                         style={{ width: '100%', borderWidth: 0 }}
                         headStyle={{ color: 'black', backgroundColor: '#dfe4ea', fontWeight: 'bold', fontSize: 14 }}
                     />
-                    <Table columns={columns} dataSource={listBank} />
+                    <Table columns={columns} dataSource={listSumberDana} />
                 </Col>
                 <Col xs={12} sm={12} md={12} lg={12} xl={8} style={{ padding: 10 }}>
                     <Card
-                        title="Format Penomoran Surat"
+                        title="Tahun Anggaran"
                         //extra={<Button type="dashed" onClick={() => browserHistory.push('/addpegawai')}>Tambah Pegawai </Button>}
                         style={{ width: '100%', borderWidth: 0 }}
                         headStyle={{ color: 'black', backgroundColor: '#dfe4ea', fontWeight: 'bold', fontSize: 14 }}
@@ -392,11 +392,11 @@ function Attr() {
                         onChange={onChangeJenisAttr}
                         value={jenis_attr}
                     >
-                        <Option value="Bank">Bank</Option>
+                        <Option value="Sumber">Sumber Dana</Option>
                         <Option value="Eselon">Eselon</Option>
                         <Option value="Pangkat">Pangkat Golongan</Option>
                         <Option value="Jabatan">Jabatan</Option>
-                        <Option value="Format">Format Penomoran Surat</Option>
+                        <Option value="Tahun">Tahun Anggaran</Option>
                         <Option value="Satuan">Satuan</Option>
                     </Select>
                 </InputBoxCenter>
